@@ -1,2 +1,4 @@
-# laeg
+# LAEG
 Loop Aware Exploration Graph
+
+TODO
