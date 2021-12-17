@@ -1,4 +1,4 @@
 # LAEG
-Loop Aware Exploration Graph
+Loop-Aware Exploration Graph
 
 TODO
