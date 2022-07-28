@@ -1,0 +1,37 @@
+<!--
+ This file is part of LAEG
+ Copyright 2022:
+ - Diego Pittol <dpittol at inf dot ufrgs dot br> (Phi Robotics Research Lab - UFRGS)
+ - Renan Maffei <rqmaffei at in dot ufrgs dot br> (Phi Robotics Research Lab - UFRGS)
+ - Vitor Jorge
+ For more information see <https://github.com/phir2-lab/laeg>
+ 
+ LAEG is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ LAEG is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with LAEG If not, see <https://www.gnu.org/licenses/>.
+-->
+
+<launch>
+	
+	<arg name="urdf" default="$(find loop_exploration)/description/urdf/pioneer3dx-rosaria.urdf.xacro" />
+	
+	<param name="robot_description" command="$(find xacro)/xacro $(arg urdf)" />
+
+	<node name="rosaria_phi" pkg="rosaria_phi" type="RosAria" output="screen" args="_sonar_frame:=front_sonar _publish_aria_lasers:=true _port:=localhost"/>
+
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find loop_exploration)/phi-rosaria.rviz" required="true" />
+
+</launch>

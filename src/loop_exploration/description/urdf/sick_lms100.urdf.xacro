@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) 2016, Renan Maffei, Phi Robotics Reseach Group, INF - UFRGS
+Copyright (c) 2013, Goncalo Cabrita, ISR University of Coimbra
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of Clearpath Robotics nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:xacro="http://ros.org/wiki/xacro" name="sick_lms100">
+
+	<!-- SICK LMS100-->
+
+	<xacro:include filename="$(find loop_exploration)/description/urdf/common.xacro" />
+
+	<xacro:property name="laser_x" value="0.105" />
+	<xacro:property name="laser_y" value="0.102" />
+	<xacro:property name="laser_z" value="0.152" />
+	<xacro:property name="laser_mass" value="1.1" />
+
+	<xacro:macro name="sick_lms100" params="parent x y z rx ry rz"> 
+  		<link name="sick_lms100">
+            <xacro:box_inertial x="${laser_x}" y="${laser_y}" z="${laser_z}" mass="${laser_mass}" />
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://loop_exploration/description/sensors_meshes/sick_lms100.stl" />
+                </geometry>
+                <material name="SickBlue">
+                    <color rgba="0.0 0.0 0.810 1.0"/>
+                </material>
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="package://loop_exploration/description/sensors_meshes/sick_lms100.stl" />
+                    <!-- <box size="${laser_x} ${laser_y} ${laser_z}" /> -->
+                </geometry>
+            </collision>
+        </link>
+
+		<joint name="joint_sick_lms100" type="fixed">
+			<parent link="${parent}"/>
+			<child link="sick_lms100"/>
+			<origin xyz="${x} ${y} ${z}" rpy="${rx} ${ry} ${rz}" /> 
+		</joint>
+
+		<gazebo reference="sick_lms100">
+			<material>Gazebo/Blue</material>
+			<turnGravityOff>true</turnGravityOff>
+    			<sensor type="ray" name="sick_lms100">
+      				<pose>0 0 0 0 0 0</pose>
+      				<visualize>false</visualize>
+     	 			<update_rate>40</update_rate>
+      				<ray>
+        				<scan>
+          					<horizontal>
+            						<samples>720</samples>
+            						<resolution>1</resolution>
+            						<min_angle>-1.570796</min_angle>
+            						<max_angle>1.570796</max_angle>
+          					</horizontal>
+        				</scan>
+        				<range>
+          					<min>0.10</min>
+          					<max>30.0</max>
+          					<resolution>0.01</resolution>
+        				</range>
+        				<noise>
+          					<type>gaussian</type>
+          					<mean>0.0</mean>
+          					<stddev>0.001</stddev>
+        				</noise>
+      				</ray>
+      				<plugin name="gazebo_ros_laser" filename="libgazebo_ros_laser.so">
+        				<topicName>scan</topicName>
+        				<frameName>sick_lms100</frameName>
+      				</plugin>
+    			</sensor>
+  		</gazebo>
+
+	</xacro:macro>
+</robot>
