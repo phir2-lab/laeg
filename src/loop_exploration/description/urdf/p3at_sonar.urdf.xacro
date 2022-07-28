@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find loop_exploration)/description/urdf/common.xacro" />
+    <xacro:include filename="$(find loop_exploration)/description/urdf/sonar_sensor.urdf.xacro" />
+
+	<xacro:property name="update_rate" value="10" />
+	<xacro:property name="min_range" value="0.15" />
+	<xacro:property name="max_range" value="7.0" />
+	<xacro:property name="field_of_view" value="${20*M_PI/180}" />
+	<xacro:property name="ray_count" value="3" />
+
+    <xacro:macro name="p3at_sonar" params="prefix parent *origin">
+
+        <joint name="${prefix}_p3at_sonar_joint" type="fixed">
+            <xacro:insert_block name="origin" />
+            <parent link="${parent}"/>
+            <child link="${prefix}_p3at_sonar"/>
+        </joint>
+
+        <link name="${prefix}_p3at_sonar" />
+
+        <sonar_sensor name="${prefix}_sonar7" parent="${prefix}_p3at_sonar" ros_topic="${prefix}_p3at_sonar/sonar7/" update_rate="${update_rate}" min_range="${min_range}" max_range="${max_range}" field_of_view="${field_of_view}" ray_count="${ray_count}">
+            <origin xyz="-0.044 0.140 0.0" rpy="0 0 ${90.0*M_PI/180.0}"/>
+        </sonar_sensor>
+
+        <sonar_sensor name="${prefix}_sonar6" parent="${prefix}_p3at_sonar" ros_topic="${prefix}_p3at_sonar/sonar6/" update_rate="${update_rate}" min_range="${min_range}" max_range="${max_range}" field_of_view="${field_of_view}" ray_count="${ray_count}">
+            <origin xyz="0.002 0.124 0.0" rpy="0 0 ${50.0*M_PI/180.0}"/>
+        </sonar_sensor>
+
+        <sonar_sensor name="${prefix}_sonar5" parent="${prefix}_p3at_sonar" ros_topic="${prefix}_p3at_sonar/sonar5/" update_rate="${update_rate}" min_range="${min_range}" max_range="${max_range}" field_of_view="${field_of_view}" ray_count="${ray_count}">
+            <origin xyz="0.040 0.080 0.0" rpy="0 0 ${30.0*M_PI/180.0}"/>
+        </sonar_sensor>
+
+        <sonar_sensor name="${prefix}_sonar4" parent="${prefix}_p3at_sonar" ros_topic="${prefix}_p3at_sonar/sonar4/" update_rate="${update_rate}" min_range="${min_range}" max_range="${max_range}" field_of_view="${field_of_view}" ray_count="${ray_count}">
+            <origin xyz="0.058 0.030 0.0" rpy="0 0 ${10.0*M_PI/180.0}"/>
+        </sonar_sensor>
+
+        <sonar_sensor name="${prefix}_sonar3" parent="${prefix}_p3at_sonar" ros_topic="${prefix}_p3at_sonar/sonar3/" update_rate="${update_rate}" min_range="${min_range}" max_range="${max_range}" field_of_view="${field_of_view}" ray_count="${ray_count}">
+            <origin xyz="0.058 -0.030 0.0" rpy="0 0 ${-10.0*M_PI/180.0}"/>
+        </sonar_sensor>
+
+        <sonar_sensor name="${prefix}_sonar2" parent="${prefix}_p3at_sonar" ros_topic="${prefix}_p3at_sonar/sonar2/" update_rate="${update_rate}" min_range="${min_range}" max_range="${max_range}" field_of_view="${field_of_view}" ray_count="${ray_count}">
+            <origin xyz="0.040 -0.080 0.0" rpy="0 0 ${-30.0*M_PI/180.0}"/>
+        </sonar_sensor>
+
+        <sonar_sensor name="${prefix}_sonar1" parent="${prefix}_p3at_sonar" ros_topic="${prefix}_p3at_sonar/sonar1/" update_rate="${update_rate}" min_range="${min_range}" max_range="${max_range}" field_of_view="${field_of_view}" ray_count="${ray_count}">
+            <origin xyz="0.002 -0.124 0.0" rpy="0 0 ${-50.0*M_PI/180.0}"/>
+        </sonar_sensor>
+
+        <sonar_sensor name="${prefix}_sonar0" parent="${prefix}_p3at_sonar" ros_topic="${prefix}_p3at_sonar/sonar0/" update_rate="${update_rate}" min_range="${min_range}" max_range="${max_range}" field_of_view="${field_of_view}" ray_count="${ray_count}">
+            <origin xyz="-0.044 -0.140 0.0" rpy="0 0 ${-90.0*M_PI/180.0}"/>
+        </sonar_sensor>
+
+    </xacro:macro>
+</robot>

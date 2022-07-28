@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+<!--
+Copyright (c) 2016, Renan Maffei, Phi Robotics Reseach Group, INF - UFRGS
+Copyright (c) 2013, Goncalo Cabrita, ISR University of Coimbra
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of Clearpath Robotics nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	xmlns:xacro="http://ros.org/wiki/xacro" name="pointgrey_flea3">
+
+	<!-- PointGrey Flea 3 -->
+
+	<xacro:include filename="$(find loop_exploration)/description/urdf/common.xacro" />
+
+	<xacro:property name="base_x" value="0.040" />
+	<xacro:property name="base_y" value="0.150" />
+	<xacro:property name="base_z" value="0.015" />
+ 	<xacro:property name="standoff_length" value="0.100" />
+	<xacro:property name="standoff_radius" value="0.020" />
+	<xacro:property name="flea_size" value="0.03" />
+	<xacro:property name="lense_length" value="0.04" />
+	<xacro:property name="lense_radius" value="0.015" />
+
+	<xacro:macro name="pointgrey_flea3" params="prefix parent base_offset camera_offset camera_r camera_p camera_y"> 
+		
+		<!-- Camera Base -->
+		<link name="${prefix}_camera_base">
+			<xacro:box_inertial x="${base_x}" y="${base_y}" z="${base_z}" mass="0.100" />
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<box size="${base_x} ${base_y} ${base_z}"/>
+				</geometry>
+				<material name="Gray" />
+  			</visual>
+    			<collision>
+      				<geometry>
+        				<box size="${base_x} ${base_y} ${base_z}"/>
+      				</geometry>
+    			</collision>
+  		</link>
+		<gazebo reference="${prefix}_camera_base">
+        		<material>Gazebo/Grey</material>
+       			 <turnGravityOff>false</turnGravityOff>
+    		</gazebo>
+
+		<joint name="joint_${prefix}_camera_base" type="fixed">
+			<parent link="${parent}"/>
+			<child link="${prefix}_camera_base"/>
+			<origin xyz="0 ${base_offset} 0" rpy="0 0 0" /> 
+		</joint>
+
+		<!-- Camera Standoff -->
+		<link name="${prefix}_camera_standoff">
+			<xacro:cylinder_inertial radius="${standoff_radius}" length="${standoff_length}" mass="0.100" />
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<cylinder length="${standoff_length}" radius="${standoff_radius}"/>
+				</geometry>
+				<material name="Gray" />
+  			</visual>
+    			<collision>
+      				<geometry>
+        				<cylinder length="${standoff_length}" radius="${standoff_radius}"/>
+      				</geometry>
+    			</collision>
+  		</link>
+		<gazebo reference="${prefix}_camera_standoff">
+        		<material>Gazebo/Grey</material>
+       			 <turnGravityOff>false</turnGravityOff>
+    		</gazebo>
+
+		<joint name="joint_${prefix}_camera_standoff" type="fixed">
+			<parent link="${prefix}_camera_base"/>
+			<child link="${prefix}_camera_standoff"/>
+			<origin xyz="0 ${camera_offset} ${standoff_length/2}" rpy="0 0 0" /> 
+		</joint>
+
+		<!-- PointGrey Flea3 Camera -->
+  		<link name="${prefix}_camera">
+			<xacro:box_inertial x="${flea_size}" y="${flea_size}" z="${flea_size}" mass="0.100" />
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 0" />
+				<geometry>
+					<box size="${flea_size} ${flea_size} ${flea_size}"/>
+				</geometry>
+				<material name="Black" />
+  			</visual>
+    			<collision>
+      				<geometry>
+        				<box size="${flea_size} ${flea_size} ${flea_size}"/>
+      				</geometry>
+    			</collision>
+  		</link>
+		<gazebo reference="${prefix}_camera">
+        		<material>Gazebo/Black</material>
+       			 <turnGravityOff>false</turnGravityOff>
+    		</gazebo>
+
+		<joint name="joint_${prefix}_camera" type="fixed">
+			<parent link="${prefix}_camera_standoff"/>
+			<child link="${prefix}_camera"/>
+			<origin xyz="0 0 ${standoff_length/2+flea_size/2}" rpy="${camera_r} ${camera_p} ${camera_y}" /> 
+		</joint>
+
+		<!-- Camera Lense -->
+		<link name="${prefix}_lense">
+			<xacro:cylinder_inertial radius="${lense_radius}" length="${lense_length}" mass="0.100" />
+			<visual>
+      				<geometry>
+        				<cylinder length="${lense_length}" radius="${lense_radius}"/>
+      				</geometry>
+				<origin rpy="0 1.57 0" xyz="0 0 -0.035"/>
+      				<material name="Black"/>
+    			</visual>
+    			<collision>
+      				<geometry>
+        				<cylinder length="${lense_length}" radius="${lense_radius}"/>
+      				</geometry>
+    			</collision>
+  		</link>
+
+		<joint name="joint_${prefix}_lense" type="fixed">
+			<parent link="${prefix}_camera"/>
+			<child link="${prefix}_lense"/>
+			<origin xyz="0 0 ${flea_size/2+lense_length/2}" rpy="${camera_r} ${camera_p} ${camera_y}" /> 
+		</joint>
+
+		<!-- camera -->
+  		<gazebo reference="${prefix}_lense">
+			<material>Gazebo/Black</material>
+       			 <turnGravityOff>false</turnGravityOff>
+    			<sensor type="camera" name="${prefix}_camera">
+      				<update_rate>30.0</update_rate>
+      				<camera name="${prefix}_pgr">
+        				<horizontal_fov>1.3962634</horizontal_fov>
+        				<image>
+          					<width>800</width>
+          					<height>800</height>
+          					<format>R8G8B8</format>
+        				</image>
+        				<clip>
+          					<near>0.02</near>
+          					<far>300</far>
+        				</clip>
+        				<noise>
+          					<type>gaussian</type>
+          					<!-- Noise is sampled independently per pixel on each frame.  
+               					That pixel's noise value is added to each of its color channels, which at that point lie in the range [0,1]. -->
+          					<mean>0.0</mean>
+          					<stddev>0.007</stddev>
+        				</noise>
+      				</camera>
+      				<plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        				<alwaysOn>true</alwaysOn>
+        				<updateRate>0.0</updateRate>
+        				<cameraName>${prefix}_camera</cameraName>
+       					<imageTopicName>image_raw</imageTopicName>
+        				<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        				<frameName>camera_link</frameName>
+        				<hackBaseline>0.07</hackBaseline>
+        				<distortionK1>0.0</distortionK1>
+        				<distortionK2>0.0</distortionK2>
+        				<distortionK3>0.0</distortionK3>
+        				<distortionT1>0.0</distortionT1>
+        				<distortionT2>0.0</distortionT2>
+      				</plugin>
+    			</sensor>
+  		</gazebo>  
+
+	</xacro:macro>
+</robot>
