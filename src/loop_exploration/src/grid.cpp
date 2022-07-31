@@ -217,6 +217,8 @@ bool Grid::show_path()
 
 void Grid::Draw(int xi, int yi, int xf, int yf)
 {
+    if(view_mode_ == 2) return;
+
     glLoadIdentity();
 
     for(int i=xi; i<=xf; ++i)
@@ -226,8 +228,6 @@ void Grid::Draw(int xi, int yi, int xf, int yf)
             DrawCell(i+j*num_cells_in_row_);
         }
     }
-
-    if(view_mode_ == 2) return;
 
     if(show_arrows_)
     {
@@ -246,47 +246,48 @@ void Grid::DrawCell(unsigned int n)
 {
     float aux;
 
+    bool draw = true;
+
     if(view_mode_== 0) // With rails
     {
         if(cells_[n].is_center)
             glColor3fv(color_rails);
-        else if(cells_[n].type == UNEXPLORED)
-            glColor3fv(color_cell_unexplored);
         else if(cells_[n].type == OCCUPIED)
             glColor3fv(color_cell_occupied);
         else if(cells_[n].type == NEAROBSTACLE)
             glColor3fv(color_cell_near_occupied);
         else if(cells_[n].is_visited)
             glColor3fv(color_cell_visited);
-        else
+        else if(cells_[n].type == FREE)
             glColor3fv(color_cell_free);
+        else
+            draw = false;
     }
     else if(view_mode_==1) //Without rails
     {
-        if(cells_[n].type == UNEXPLORED)
-            glColor3fv(color_cell_unexplored);
-        else if(cells_[n].type == OCCUPIED)
+        if(cells_[n].type == OCCUPIED)
             glColor3fv(color_cell_occupied);
         else if(cells_[n].type == NEAROBSTACLE)
             glColor3fv(color_cell_near_occupied);
         else if(cells_[n].is_visited)
             glColor3fv(color_cell_visited);
-        else
+        else if(cells_[n].type == FREE)
             glColor3fv(color_cell_free);
-    }
-    else if(view_mode_==2) //White board
-    {
-        glColor3f(1,1,1);
+        else
+            draw = false;
     }
 
-    glBegin( GL_QUADS );
+    if(draw)
     {
-        glVertex2f(cells_[n].x+1, cells_[n].y+1);
-        glVertex2f(cells_[n].x+1, cells_[n].y  );
-        glVertex2f(cells_[n].x  , cells_[n].y  );
-        glVertex2f(cells_[n].x  , cells_[n].y+1);
+        glBegin( GL_QUADS );
+        {
+            glVertex2f(cells_[n].x+1, cells_[n].y+1);
+            glVertex2f(cells_[n].x+1, cells_[n].y  );
+            glVertex2f(cells_[n].x  , cells_[n].y  );
+            glVertex2f(cells_[n].x  , cells_[n].y+1);
+        }
+        glEnd();
     }
-    glEnd();
 }
 
 void Grid::DrawCellWithColor(int x, int y, GLfloat const color[])
