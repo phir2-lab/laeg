@@ -281,7 +281,7 @@ void GlutClass::Keyboard(unsigned char key, int x, int y)
             if(instance_->glut_scale_aux_ > instance_->grid_->map_max_width()/2)
                 instance_->glut_scale_aux_ = instance_->grid_->map_max_width()/2;
             break;
-        case '+': 
+        case '+':
             instance_->glut_scale_aux_ -= 10;
             if(instance_->glut_scale_aux_ < instance_->grid_->map_scale())
                 instance_->glut_scale_aux_ = instance_->grid_->map_scale();
