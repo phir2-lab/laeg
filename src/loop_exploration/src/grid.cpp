@@ -256,7 +256,7 @@ void Grid::DrawCell(unsigned int n)
             glColor3fv(color_cell_occupied);
         else if(cells_[n].type == NEAROBSTACLE)
             glColor3fv(color_cell_near_occupied);
-        else if(cells_[n].is_visited)
+        else if(cells_[n].is_visited && cells_[n].type != UNEXPLORED)
             glColor3fv(color_cell_visited);
         else if(cells_[n].type == FREE)
             glColor3fv(color_cell_free);
@@ -269,7 +269,7 @@ void Grid::DrawCell(unsigned int n)
             glColor3fv(color_cell_occupied);
         else if(cells_[n].type == NEAROBSTACLE)
             glColor3fv(color_cell_near_occupied);
-        else if(cells_[n].is_visited)
+        else if(cells_[n].is_visited && cells_[n].type != UNEXPLORED)
             glColor3fv(color_cell_visited);
         else if(cells_[n].type == FREE)
             glColor3fv(color_cell_free);
